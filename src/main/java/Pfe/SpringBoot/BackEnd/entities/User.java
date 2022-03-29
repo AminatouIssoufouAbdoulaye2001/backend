@@ -38,4 +38,6 @@ public class User {
   @OneToMany(fetch = FetchType.LAZY)
   private Collection<Facture> factures;
 
+  public void setUserCode(String toString) {
+  }
 }

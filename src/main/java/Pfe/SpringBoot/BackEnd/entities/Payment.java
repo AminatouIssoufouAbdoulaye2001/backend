@@ -12,7 +12,7 @@ import javax.persistence.OneToMany;
 import lombok.Data;
 
 @Data
-@Entity(name = "payment")
+@Entity(name = "paymentController")
 public class Payment {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
