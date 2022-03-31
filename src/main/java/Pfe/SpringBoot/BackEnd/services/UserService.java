@@ -1,39 +1,60 @@
 package Pfe.SpringBoot.BackEnd.services;
 
+import Pfe.SpringBoot.BackEnd.dtos.APIResponseDTO;
+import Pfe.SpringBoot.BackEnd.dtos.CreateUserDTO;
+import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
 import Pfe.SpringBoot.BackEnd.entities.User;
 import Pfe.SpringBoot.BackEnd.repositories.UserRepository;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collection;
+import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-@Transactional
 public class UserService {
 
-  private static UserRepository userRepository;
+    private static UserRepository userRepository;
 
-  public User addUser(User user) {
-    user.setUserCode(UUID.randomUUID().toString());
-    return userRepository.save(user);
-  }
+    @Autowired
+    public UserService( UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-  public Collection<User> findAllUser() {
-    return (Collection<User>) userRepository.findAll();
-  }
-  public User updateUser(User user) {
-    return userRepository.save(user);
-  }
+    public APIResponseDTO create(CreateUserDTO createUserDTO) {
+        // validate inputs + email unique
 
-  public Optional<User> findById(Long id) {
-    return userRepository.findById(id);
-  }
+        User newUser = new User();
+        newUser.setFirstName(createUserDTO.getFirstName());
+        newUser.setLastName(createUserDTO.getLastName());
+        newUser.setEmail(createUserDTO.getEmail());
+        newUser.setPhone(createUserDTO.getPhone());
+        newUser.setPassword(createUserDTO.getPassword());
 
-  public void deleteUserById(Long id) {
-    userRepository.deleteUserById(id);
-  }
+        userRepository.save(newUser);
+        return new APIResponseDTO("Notre compte a été crée");
+    }
+
+    public APIResponseDTO login(LoginDTO loginDTO) {
+        // code métier
+
+        // retourner le token
+        return new APIResponseDTO("token :)");
+    }
+
+    public Collection<User> findAllUser() {
+        return (Collection<User>) userRepository.findAll();
+    }
+
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public void deleteUserById(Long id) {
+        userRepository.deleteUserById(id);
+    }
 }
