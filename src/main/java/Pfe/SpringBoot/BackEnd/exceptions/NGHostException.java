@@ -1,6 +1,6 @@
 package Pfe.SpringBoot.BackEnd.exceptions;
 
-public abstract class NGHostException  extends RuntimeException{
+public abstract class NGHostException  extends Exception{
     public NGHostException(final String message) {
         super(message);
     }

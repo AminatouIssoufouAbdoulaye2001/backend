@@ -1,9 +1,10 @@
 package Pfe.SpringBoot.BackEnd.services;
 
+import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
 import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.UserAccountDTO;
-import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
 import Pfe.SpringBoot.BackEnd.entities.User;
+import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,18 +23,20 @@ public class UserService {
     private static UserRepository userRepository;
 
     @Autowired
-    public UserService( UserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public NGHostResponseDTO create(UserAccountDTO userAccountDTO) {
+    public NGHostResponseDTO create(UserAccountDTO userAccountDTO) throws NGHost400Exception {
         Set<ConstraintViolation<UserAccountDTO>> violations = validator.validate(userAccountDTO);
         if (!violations.isEmpty()) {
             StringBuilder sb = new StringBuilder();
 
-            for(ConstraintViolation<UserAccountDTO> constraintViolation: violations) {
+            for (ConstraintViolation<UserAccountDTO> constraintViolation : violations) {
                 sb.append(constraintViolation.getMessage());
             }
+
+            throw new NGHost400Exception(sb.toString());
         }
 
         User newUser = new User();
