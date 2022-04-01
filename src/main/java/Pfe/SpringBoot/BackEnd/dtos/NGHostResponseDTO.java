@@ -5,18 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-public class APIResponseDTO {
+public class NGHostResponseDTO {
     private boolean success = true;
     private String message;
     private Object payload;
 
-    public APIResponseDTO(String message) {
+    public NGHostResponseDTO(String message) {
         this.message = message;
     }
-    public APIResponseDTO(Object payload) {
+    public NGHostResponseDTO(Object payload) {
         this.payload = payload;
     }
-    public APIResponseDTO(String message, boolean success) {
+    public NGHostResponseDTO(String message, boolean success) {
         this.message = message;
         this.success = success;
     }

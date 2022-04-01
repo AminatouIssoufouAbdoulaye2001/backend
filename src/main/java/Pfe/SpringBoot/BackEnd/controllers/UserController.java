@@ -1,6 +1,6 @@
 package Pfe.SpringBoot.BackEnd.controllers;
 
-import Pfe.SpringBoot.BackEnd.dtos.APIResponseDTO;
+import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.UserAccountDTO;
 import Pfe.SpringBoot.BackEnd.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping()
-    public ResponseEntity<APIResponseDTO> createAccount(@RequestBody() UserAccountDTO createUserDTO) {
+    public ResponseEntity<NGHostResponseDTO> createAccount(@RequestBody() UserAccountDTO createUserDTO) {
         return ResponseEntity.ok(userService.create(createUserDTO));
     }
 }

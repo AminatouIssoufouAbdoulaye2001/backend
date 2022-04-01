@@ -1,6 +1,6 @@
 package Pfe.SpringBoot.BackEnd.services;
 
-import Pfe.SpringBoot.BackEnd.dtos.APIResponseDTO;
+import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.UserAccountDTO;
 import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
 import Pfe.SpringBoot.BackEnd.entities.User;
@@ -26,7 +26,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public APIResponseDTO create(UserAccountDTO userAccountDTO) {
+    public NGHostResponseDTO create(UserAccountDTO userAccountDTO) {
         Set<ConstraintViolation<UserAccountDTO>> violations = validator.validate(userAccountDTO);
         if (!violations.isEmpty()) {
             StringBuilder sb = new StringBuilder();
@@ -44,14 +44,14 @@ public class UserService {
         newUser.setPassword(userAccountDTO.getPassword());
 
         userRepository.save(newUser);
-        return new APIResponseDTO("Notre compte a été crée");
+        return new NGHostResponseDTO("Notre compte a été crée");
     }
 
-    public APIResponseDTO login(LoginDTO loginDTO) {
+    public NGHostResponseDTO login(LoginDTO loginDTO) {
         // code métier
 
         // retourner le token
-        return new APIResponseDTO("token :)");
+        return new NGHostResponseDTO("token :)");
     }
 
     public Collection<User> findAllUser() {
