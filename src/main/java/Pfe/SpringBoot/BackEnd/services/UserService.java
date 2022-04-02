@@ -1,5 +1,6 @@
 package Pfe.SpringBoot.BackEnd.services;
 
+import Pfe.SpringBoot.BackEnd.constantes.ERole;
 import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
 import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.UserAccountDTO;
@@ -27,27 +28,25 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public NGHostResponseDTO create(UserAccountDTO userAccountDTO) throws NGHost400Exception {
+    public NGHostResponseDTO create(UserAccountDTO userAccountDTO) throws NGHost400Exception{
         Set<ConstraintViolation<UserAccountDTO>> violations = validator.validate(userAccountDTO);
         if (!violations.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-
-            for (ConstraintViolation<UserAccountDTO> constraintViolation : violations) {
-                sb.append(constraintViolation.getMessage());
-            }
-
-            throw new NGHost400Exception(sb.toString());
+            // retourner la première contrainte non vérifiée
+            ConstraintViolation<UserAccountDTO> constraintViolation =
+                    violations.stream().findFirst().get();
+            throw new NGHost400Exception(constraintViolation.getMessage());
         }
 
-        User newUser = new User();
-        newUser.setFirstName(userAccountDTO.getFirstName());
-        newUser.setLastName(userAccountDTO.getLastName());
-        newUser.setEmail(userAccountDTO.getEmail());
-        newUser.setPhone(userAccountDTO.getPhone());
-        newUser.setPassword(userAccountDTO.getPassword());
+        // todo: utiliser un validator ou un custom annotation
+        if (!userAccountDTO.getPassword().equals(userAccountDTO.getConfirmePassword())) {
+            throw new NGHost400Exception("le mot de passe diffère du mot de passe de confirmation");
+        }
 
-        userRepository.save(newUser);
-        return new NGHostResponseDTO("Notre compte a été crée");
+        User user = UserAccountDTO.dtoToModel(userAccountDTO);
+        user.setRole(ERole.ROLE_CLIENT);
+
+        userRepository.save(user);
+        return new NGHostResponseDTO("Votre compte a été crée, Connectez Vous");
     }
 
     public NGHostResponseDTO login(LoginDTO loginDTO) {

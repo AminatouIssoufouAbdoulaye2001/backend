@@ -1,10 +1,13 @@
 package Pfe.SpringBoot.BackEnd.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class NGHostRequestErrorDTO {
-    private int status;
+    private String status="error";
     private String message;
+    private Integer code;
+
 }

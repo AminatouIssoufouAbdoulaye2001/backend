@@ -18,7 +18,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping()
-    public ResponseEntity<NGHostResponseDTO> createAccount(@RequestBody() UserAccountDTO createUserDTO) throws NGHost400Exception {
+    public ResponseEntity<NGHostResponseDTO> createAccount(@RequestBody() UserAccountDTO createUserDTO)  throws NGHost400Exception{
         return ResponseEntity.ok(userService.create(createUserDTO));
     }
 }
