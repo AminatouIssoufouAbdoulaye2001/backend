@@ -8,6 +8,9 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UserAccountDTO {
+    @NotBlank(message = "le username est obligatoire")
+    private String userName;
+
     @NotBlank(message = "le nom est obligatoire")
     private String firstName;
 
@@ -29,6 +32,7 @@ public class UserAccountDTO {
        user.setFirstName(dto.getFirstName());
        user.setLastName(dto.getFirstName());
        user.setEmail(dto.getEmail());
+       user.setUserName(dto.getUserName());
        user.setPassword(dto.getPassword());
 
        return user;
