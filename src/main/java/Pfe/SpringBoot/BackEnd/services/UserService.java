@@ -62,7 +62,7 @@ public class UserService {
         }
 
         // todo: utiliser un validator ou un custom annotation
-        if (!userAccountDTO.getPassword().equals(userAccountDTO.getConfirmePassword())) {
+        if (!userAccountDTO.getPassword().equals(userAccountDTO.getPasswordConf())) {
             throw new NGHost400Exception("le mot de passe diffère du mot de passe de confirmation");
         }
 

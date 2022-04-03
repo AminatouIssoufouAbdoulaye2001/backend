@@ -36,8 +36,7 @@ public class BackEndApplication implements CommandLineRunner {
 			// le compte de l'administrateur est le premier
 			User admin = new User();
 			admin.setUserName(adminUserName);
-			admin.setFirstName("administrator");
-			admin.setLastName("root");
+			admin.setFullName("ngHost administrator");
 			admin.setEmail("admin.nghost@tn.com");
 			admin.setPassword(adminPassword);
 			admin.setRole(ERole.ROLE_ADMIN);

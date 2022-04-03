@@ -11,28 +11,24 @@ public class UserAccountDTO {
     @NotBlank(message = "le username est obligatoire")
     private String userName;
 
-    @NotBlank(message = "le nom est obligatoire")
-    private String firstName;
-
-    @NotBlank(message = "le prénom est obligatoire")
-    private String lastName;
+    @NotBlank(message = "le nom & et le prénom sont obligatoires")
+    private String fullName;
 
     @NotBlank(message = "l'adresse email est obligatoire")
-    @Email(message = "le format de l'adresse n'est pas conforme")
+    @Email(message = "le format de l'adresse n'est pas valid")
     private String email;
 
     @NotBlank(message = "le mot de passe est obligatoire")
     private String password;
 
     @NotBlank(message = "la confirmation du mot de passe est obligatoire est obligatoire")
-    private String confirmePassword;
+    private String PasswordConf;
 
     public static User dtoToModel(UserAccountDTO dto) {
        User user = new User();
-       user.setFirstName(dto.getFirstName());
-       user.setLastName(dto.getFirstName());
-       user.setEmail(dto.getEmail());
        user.setUserName(dto.getUserName());
+       user.setFullName(dto.getFullName());
+       user.setEmail(dto.getEmail());
        user.setPassword(dto.getPassword());
 
        return user;
