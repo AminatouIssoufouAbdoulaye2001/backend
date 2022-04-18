@@ -5,6 +5,7 @@ import Pfe.SpringBoot.BackEnd.configurations.jwt.JWTUtil;
 import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
 import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.UserAccountDTO;
+import Pfe.SpringBoot.BackEnd.dtos.UserProfilDTO;
 import Pfe.SpringBoot.BackEnd.entities.User;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost401Exception;
@@ -84,4 +85,16 @@ public class UserService {
         return new NGHostResponseDTO(jwtUtil.generateToken(userDetails));
     }
 
+    public NGHostResponseDTO getProfil (final  String username) throws NGHost400Exception{
+        if (username.isEmpty()) {
+            throw new NGHost400Exception("Le username est invalid");
+        }
+
+        Optional<User> user = userRepository.findByUserName(username);
+        if (!user.isPresent()) {
+            throw new NGHost400Exception("L' utilisateur introuvale");
+        }
+        UserProfilDTO userProfil = new UserProfilDTO(user.get());
+         return new NGHostResponseDTO(userProfil);
+    }
 }
