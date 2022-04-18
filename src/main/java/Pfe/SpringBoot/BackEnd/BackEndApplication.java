@@ -42,6 +42,17 @@ public class BackEndApplication implements CommandLineRunner {
 			admin.setRole(ERole.ROLE_ADMIN);
 
 			userRepository.save(admin);
+
+			// compte client par defaut
+
+			User client = new User();
+			client.setUserName("client");
+			client.setFullName("Anonyme client");
+			client.setEmail("client.nghost@tn.com");
+			client.setPassword(adminPassword);
+			client.setRole(ERole.ROLE_CLIENT);
+
+			userRepository.save(client);
 		}
 
 	}
