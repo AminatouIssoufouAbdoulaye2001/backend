@@ -4,7 +4,6 @@ import Pfe.SpringBoot.BackEnd.constantes.ERole;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity(name = "user")
 @Data
@@ -28,10 +27,4 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private ERole role;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private Collection<Ticket> tickets;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private Collection<Facture> factures;
 }
