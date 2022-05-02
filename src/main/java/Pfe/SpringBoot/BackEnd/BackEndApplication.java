@@ -16,49 +16,49 @@ import java.util.Collection;
 
 @SpringBootApplication
 public class BackEndApplication implements CommandLineRunner {
-	@Autowired
-	UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
-	@Value(value ="${root.username}")
-	private  String adminUserName;
+    @Value(value = "${root.username}")
+    private String adminUserName;
 
-	@Value(value = "${root.password}")
-	private  String adminPassword;
+    @Value(value = "${root.password}")
+    private String adminPassword;
 
-	public static void main(String[] args) {
-		SpringApplication.run(BackEndApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BackEndApplication.class, args);
+    }
 
-	@Override
-	public void run(String... args) throws Exception {
-		Collection<User> users = (Collection<User>)userRepository.findAll();
-		if (users.isEmpty()) {
-			// le compte de l'administrateur est le premier
-			User admin = new User();
-			admin.setUserName(adminUserName);
-			admin.setFullName("ngHost administrator");
-			admin.setEmail("admin.nghost@tn.com");
-			admin.setPassword(adminPassword);
-			admin.setRole(ERole.ROLE_ADMIN);
+    @Override
+    public void run(String... args) throws Exception {
+        Collection<User> users = (Collection<User>) userRepository.findAll();
+        if (users.isEmpty()) {
+            // le compte de l'administrateur est le premier
+            User admin = new User();
+            admin.setUserName(adminUserName);
+            admin.setFullName("ngHost administrator");
+            admin.setEmail("admin.nghost@tn.com");
+            admin.setPassword(adminPassword);
+            admin.setRole(ERole.ROLE_ADMIN);
 
-			userRepository.save(admin);
+            userRepository.save(admin);
 
-			// compte client par defaut
+            // compte client par defaut
 
-			User client = new User();
-			client.setUserName("client");
-			client.setFullName("Anonyme client");
-			client.setEmail("client.nghost@tn.com");
-			client.setPassword(adminPassword);
-			client.setRole(ERole.ROLE_CLIENT);
+            User client = new User();
+            client.setUserName("client");
+            client.setFullName("Anonyme client");
+            client.setEmail("client.nghost@tn.com");
+            client.setPassword(adminPassword);
+            client.setRole(ERole.ROLE_CLIENT);
 
-			userRepository.save(client);
-		}
+            userRepository.save(client);
+        }
+    }
 
-	}
-
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }
+
