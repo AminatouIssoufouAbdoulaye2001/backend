@@ -33,10 +33,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private static final String[] WHITELIST_ROUTES = {
-            "/api/v1/users",
+             "/api/v1/users",
             "/api/v1/users/login",
             // h2 db
-            "/h2-console/**"
+            "/h2-console/**",
+
     };
 
     @Bean

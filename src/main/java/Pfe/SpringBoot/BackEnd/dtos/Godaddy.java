@@ -3,7 +3,7 @@ package Pfe.SpringBoot.BackEnd.dtos;
 import lombok.Data;
 
 @Data
-public class godaddy {
+public class Godaddy {
 
     private boolean available;
     private String currency;
