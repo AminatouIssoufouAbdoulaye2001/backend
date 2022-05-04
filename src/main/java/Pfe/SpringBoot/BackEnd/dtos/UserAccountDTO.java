@@ -22,7 +22,7 @@ public class UserAccountDTO {
     private String password;
 
     @NotBlank(message = "la confirmation du mot de passe est obligatoire est obligatoire")
-    private String PasswordConf;
+    private String passwordConf;
 
     public static User dtoToModel(UserAccountDTO dto) {
        User user = new User();
