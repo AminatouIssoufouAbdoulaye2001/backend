@@ -40,7 +40,7 @@ public class BackEndApplication implements CommandLineRunner {
             admin.setEmail("admin.nghost@tn.com");
             admin.setPassword(adminPassword);
             admin.setRole(ERole.ROLE_ADMIN);
-
+            admin.setActive(true);
             userRepository.save(admin);
 
             // compte client par defaut
@@ -51,7 +51,7 @@ public class BackEndApplication implements CommandLineRunner {
             client.setEmail("client.nghost@tn.com");
             client.setPassword(adminPassword);
             client.setRole(ERole.ROLE_CLIENT);
-
+            client.setActive(true);
             userRepository.save(client);
         }
     }

@@ -4,7 +4,7 @@ import Pfe.SpringBoot.BackEnd.configurations.jwt.JWTUtil;
 import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
 import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.UserAccountDTO;
-import Pfe.SpringBoot.BackEnd.entities.User;
+import Pfe.SpringBoot.BackEnd.dtos.UserProfilDTO;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost401Exception;
 import Pfe.SpringBoot.BackEnd.services.UserService;
@@ -25,7 +25,7 @@ public class UserController {
     private JWTUtil jwtUtil;
 
     @PostMapping()
-    public ResponseEntity<NGHostResponseDTO> createAccount(@RequestBody() UserAccountDTO createUserDTO)  throws NGHost400Exception{
+    public ResponseEntity<NGHostResponseDTO> createAccount(@RequestBody() UserAccountDTO createUserDTO) throws NGHost400Exception {
         return ResponseEntity.ok(userService.create(createUserDTO));
     }
 
@@ -38,8 +38,24 @@ public class UserController {
     @GetMapping(value = "/profil")
     public ResponseEntity<NGHostResponseDTO> getProfil(
             @RequestHeader(value = "Authorization") String token
-    ) throws NGHost400Exception{
+    ) throws NGHost400Exception {
         String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
         return ResponseEntity.ok(userService.getProfil(username));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @PatchMapping(value = "/{id}/profil")
+    public ResponseEntity<NGHostResponseDTO> patchProfil(
+            @RequestHeader(value = "Authorization") String token,
+            @PathVariable("id") long userId,
+            @RequestBody UserProfilDTO userProfilDTO
+    ) throws NGHost400Exception {
+        String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
+        return ResponseEntity.ok(userService.patchProfil(
+                        username,
+                        userId,
+                        userProfilDTO
+                )
+        );
     }
 }

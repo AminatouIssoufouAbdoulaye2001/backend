@@ -31,6 +31,9 @@ public class JWTUserDetailService implements UserDetailsService {
         if (!userOptional.isPresent())
             throw new UsernameNotFoundException("Le nom d'utilisateur n'existe pas.");
 
+        if (!userOptional.get().isActive())
+            throw new UsernameNotFoundException("Votre compte est bloqué Contactez l'administation du site.");
+
         List<GrantedAuthority> roles = Arrays.asList(
                 new SimpleGrantedAuthority(userOptional.get().getRole().name())
         );
@@ -43,6 +46,7 @@ public class JWTUserDetailService implements UserDetailsService {
         User user = UserAccountDTO.dtoToModel(userAccountDTO);
         user.setRole(ERole.ROLE_CLIENT);
         user.setPassword(bcryptEncoder.encode(user.getPassword()));
+        user.setActive(true);
         return userRepository.save(user);
     }
 

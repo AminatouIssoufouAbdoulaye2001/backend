@@ -62,7 +62,6 @@ public class UserService {
             throw new NGHost400Exception("Le nom d'utilisateur existe déjà");
         }
 
-        // todo: utiliser un validator ou un custom annotation
         if (!userAccountDTO.getPassword().equals(userAccountDTO.getPasswordConf())) {
             throw new NGHost400Exception("le mot de passe diffère du mot de passe de confirmation");
         }
@@ -95,6 +94,42 @@ public class UserService {
             throw new NGHost400Exception("L' utilisateur introuvale");
         }
         UserProfilDTO userProfil = new UserProfilDTO(user.get());
-         return new NGHostResponseDTO(userProfil);
+        return new NGHostResponseDTO(userProfil);
+    }
+
+    public NGHostResponseDTO patchProfil (
+            final  String username,
+            final long userId,
+            UserProfilDTO userProfilDTO
+    ) throws NGHost400Exception{
+
+        Set<ConstraintViolation<UserProfilDTO>> violations = validator.validate(userProfilDTO);
+        if (!violations.isEmpty()) {
+            // retourner la première contrainte non vérifiéeu
+            ConstraintViolation<UserProfilDTO> constraintViolation =
+                    violations.stream().findFirst().get();
+            throw new NGHost400Exception(constraintViolation.getMessage());
+        }
+
+        Optional<User> optUser = userRepository.findById(userId);
+        if (!optUser.isPresent() || !optUser.get().getUserName().equals(username)) {
+            throw new NGHost400Exception("L' utilisateur introuvale");
+        }
+
+        if (!optUser.get().getUserName().equals(userProfilDTO.getUsername())) {
+            Optional<User> optionalUser = userRepository.findByUserName(userProfilDTO.getUsername());
+            if(optionalUser.isPresent()) {
+                throw new NGHost400Exception("Le nom d'utilisateur est déjà utilisé");
+            }
+            optUser.get().setUserName(userProfilDTO.getUsername());
+        }
+
+        User user = optUser.get();
+        user.setFullName(userProfilDTO.getFullName());
+        user.setEmail(userProfilDTO.getFullName());
+        user.setPhone(userProfilDTO.getPhone());
+
+        userRepository.save(user);
+        return new NGHostResponseDTO(userProfilDTO);
     }
 }
