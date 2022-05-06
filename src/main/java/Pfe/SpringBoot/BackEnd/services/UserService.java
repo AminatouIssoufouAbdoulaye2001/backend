@@ -126,7 +126,7 @@ public class UserService {
 
         User user = optUser.get();
         user.setFullName(userProfilDTO.getFullName());
-        user.setEmail(userProfilDTO.getFullName());
+        user.setEmail(userProfilDTO.getEmail());
         user.setPhone(userProfilDTO.getPhone());
 
         userRepository.save(user);
