@@ -59,4 +59,8 @@ public class JWTUserDetailService implements UserDetailsService {
 
         return roles;
     }
+
+    public String EncodePassword(String password) {
+        return bcryptEncoder.encode(password);
+    }
 }

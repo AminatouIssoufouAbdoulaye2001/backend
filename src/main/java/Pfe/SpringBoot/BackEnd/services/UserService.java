@@ -2,10 +2,7 @@ package Pfe.SpringBoot.BackEnd.services;
 
 import Pfe.SpringBoot.BackEnd.configurations.jwt.JWTUserDetailService;
 import Pfe.SpringBoot.BackEnd.configurations.jwt.JWTUtil;
-import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
-import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
-import Pfe.SpringBoot.BackEnd.dtos.UserAccountDTO;
-import Pfe.SpringBoot.BackEnd.dtos.UserProfilDTO;
+import Pfe.SpringBoot.BackEnd.dtos.*;
 import Pfe.SpringBoot.BackEnd.entities.User;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost401Exception;
@@ -37,6 +34,10 @@ public class UserService {
     private JWTUtil jwtUtil;
 
     private static UserRepository userRepository;
+
+    private static final String TOKEN_PREFIX = "Bearer ";
+
+    private final String UNAUTHORIZED_MESSAGE = "Utilisateur non authentifié";
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -84,7 +85,7 @@ public class UserService {
         return new NGHostResponseDTO(jwtUtil.generateToken(userDetails));
     }
 
-    public NGHostResponseDTO getProfil (final  String username) throws NGHost400Exception{
+    public NGHostResponseDTO getProfil(final String username) throws NGHost400Exception {
         if (username.isEmpty()) {
             throw new NGHost400Exception("Le username est invalid");
         }
@@ -97,11 +98,11 @@ public class UserService {
         return new NGHostResponseDTO(userProfil);
     }
 
-    public NGHostResponseDTO patchProfil (
-            final  String username,
+    public NGHostResponseDTO patchProfil(
+            final String username,
             final long userId,
             UserProfilDTO userProfilDTO
-    ) throws NGHost400Exception{
+    ) throws NGHost400Exception {
 
         Set<ConstraintViolation<UserProfilDTO>> violations = validator.validate(userProfilDTO);
         if (!violations.isEmpty()) {
@@ -118,7 +119,7 @@ public class UserService {
 
         if (!optUser.get().getUserName().equals(userProfilDTO.getUsername())) {
             Optional<User> optionalUser = userRepository.findByUserName(userProfilDTO.getUsername());
-            if(optionalUser.isPresent()) {
+            if (optionalUser.isPresent()) {
                 throw new NGHost400Exception("Le nom d'utilisateur est déjà utilisé");
             }
             optUser.get().setUserName(userProfilDTO.getUsername());
@@ -131,5 +132,44 @@ public class UserService {
 
         userRepository.save(user);
         return new NGHostResponseDTO(userProfilDTO);
+    }
+
+    public NGHostResponseDTO patchPassword(final PatchPasswordDTO passwordDTO)
+            throws NGHost400Exception,NGHost401Exception {
+        checkUserIdentity(passwordDTO.getUserId());
+
+        User user = userRepository.findById(passwordDTO.getUserId()).get();
+
+        if (!passwordDTO.getNewPassword().equals(passwordDTO.getConfNewPassword())) {
+            throw new NGHost400Exception(
+                    "Le mot de passe de confirmation est différent du nouveau"
+            );
+        }
+
+        user.setPassword(
+                jwtUserDetailService.EncodePassword(passwordDTO.getNewPassword())
+        );
+
+        userRepository.save(user);
+
+        return new NGHostResponseDTO("Le mot de passe a été modifié");
+    }
+
+    public void checkUserIdentity(String token, long userId) throws NGHost401Exception {
+        String username = jwtUtil.getUsernameFromToken(
+                token.replace(TOKEN_PREFIX, "")
+        );
+
+        Optional<User> optionalUser = userRepository.findByUserName(username);
+        if (!optionalUser.isPresent() || optionalUser.get().getId() != userId) {
+            throw new NGHost401Exception(UNAUTHORIZED_MESSAGE);
+        }
+    }
+
+    private void checkUserIdentity(long userId) throws NGHost401Exception {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (!optionalUser.isPresent()) {
+            throw new NGHost401Exception(UNAUTHORIZED_MESSAGE);
+        }
     }
 }

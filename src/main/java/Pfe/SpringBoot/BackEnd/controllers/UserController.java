@@ -1,10 +1,7 @@
 package Pfe.SpringBoot.BackEnd.controllers;
 
 import Pfe.SpringBoot.BackEnd.configurations.jwt.JWTUtil;
-import Pfe.SpringBoot.BackEnd.dtos.LoginDTO;
-import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
-import Pfe.SpringBoot.BackEnd.dtos.UserAccountDTO;
-import Pfe.SpringBoot.BackEnd.dtos.UserProfilDTO;
+import Pfe.SpringBoot.BackEnd.dtos.*;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost401Exception;
 import Pfe.SpringBoot.BackEnd.services.UserService;
@@ -57,5 +54,17 @@ public class UserController {
                         userProfilDTO
                 )
         );
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @PatchMapping(value = "/{id}/password")
+    public ResponseEntity<NGHostResponseDTO> patchPassword(
+            @RequestHeader(value = "Authorization") String token,
+            @PathVariable("id") long userId,
+            @RequestBody PatchPasswordDTO passwordDTO
+    ) throws NGHost400Exception,NGHost401Exception {
+
+        userService.checkUserIdentity(token, userId);
+        return ResponseEntity.ok(userService.patchPassword(passwordDTO));
     }
 }
