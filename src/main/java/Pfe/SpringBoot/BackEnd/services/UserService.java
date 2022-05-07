@@ -85,24 +85,19 @@ public class UserService {
         return new NGHostResponseDTO(jwtUtil.generateToken(userDetails));
     }
 
-    public NGHostResponseDTO getProfil(final String username) throws NGHost400Exception {
-        if (username.isEmpty()) {
-            throw new NGHost400Exception("Le username est invalid");
+    public NGHostResponseDTO getProfil(final long userId) throws NGHost400Exception {
+
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent()) {
+            throw new NGHost400Exception("L' utilisateur introuvable");
         }
 
-        Optional<User> user = userRepository.findByUserName(username);
-        if (!user.isPresent()) {
-            throw new NGHost400Exception("L' utilisateur introuvale");
-        }
         UserProfilDTO userProfil = new UserProfilDTO(user.get());
         return new NGHostResponseDTO(userProfil);
     }
 
-    public NGHostResponseDTO patchProfil(
-            final String username,
-            final long userId,
-            UserProfilDTO userProfilDTO
-    ) throws NGHost400Exception {
+    public NGHostResponseDTO patchProfil(UserProfilDTO userProfilDTO)
+            throws NGHost400Exception {
 
         Set<ConstraintViolation<UserProfilDTO>> violations = validator.validate(userProfilDTO);
         if (!violations.isEmpty()) {
@@ -112,10 +107,7 @@ public class UserService {
             throw new NGHost400Exception(constraintViolation.getMessage());
         }
 
-        Optional<User> optUser = userRepository.findById(userId);
-        if (!optUser.isPresent() || !optUser.get().getUserName().equals(username)) {
-            throw new NGHost400Exception("L' utilisateur introuvale");
-        }
+        Optional<User> optUser = userRepository.findById(userProfilDTO.getId());
 
         if (!optUser.get().getUserName().equals(userProfilDTO.getUsername())) {
             Optional<User> optionalUser = userRepository.findByUserName(userProfilDTO.getUsername());
@@ -135,7 +127,7 @@ public class UserService {
     }
 
     public NGHostResponseDTO patchPassword(final PatchPasswordDTO passwordDTO)
-            throws NGHost400Exception,NGHost401Exception {
+            throws NGHost400Exception, NGHost401Exception {
         checkUserIdentity(passwordDTO.getUserId());
 
         User user = userRepository.findById(passwordDTO.getUserId()).get();
@@ -153,6 +145,19 @@ public class UserService {
         userRepository.save(user);
 
         return new NGHostResponseDTO("Le mot de passe a été modifié");
+    }
+
+    public NGHostResponseDTO desableAccount(long userId) throws NGHost400Exception{
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (!optionalUser.isPresent()) {
+            throw new NGHost400Exception("Utilisateur non identifié");
+        }
+
+        User user = optionalUser.get();
+        user.setActive(false);
+        userRepository.save(user);
+
+        return  new NGHostResponseDTO("Le compte a été désactivé");
     }
 
     public void checkUserIdentity(String token, long userId) throws NGHost401Exception {

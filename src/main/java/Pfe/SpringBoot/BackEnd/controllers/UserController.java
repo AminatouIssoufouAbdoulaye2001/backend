@@ -1,6 +1,5 @@
 package Pfe.SpringBoot.BackEnd.controllers;
 
-import Pfe.SpringBoot.BackEnd.configurations.jwt.JWTUtil;
 import Pfe.SpringBoot.BackEnd.dtos.*;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost401Exception;
@@ -13,31 +12,32 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/api/v1/users")
 public class UserController {
-    private static final String TOKEN_PREFIX = "Bearer ";
 
     @Autowired
     UserService userService;
 
-    @Autowired
-    private JWTUtil jwtUtil;
-
     @PostMapping()
-    public ResponseEntity<NGHostResponseDTO> createAccount(@RequestBody() UserAccountDTO createUserDTO) throws NGHost400Exception {
+    public ResponseEntity<NGHostResponseDTO> createAccount(
+            @RequestBody() UserAccountDTO createUserDTO) throws NGHost400Exception {
         return ResponseEntity.ok(userService.create(createUserDTO));
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<NGHostResponseDTO> login(@RequestBody() LoginDTO loginDTO) throws NGHost401Exception {
+    public ResponseEntity<NGHostResponseDTO> login(
+            @RequestBody() LoginDTO loginDTO) throws NGHost401Exception {
+
         return ResponseEntity.ok(userService.login(loginDTO));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    @GetMapping(value = "/profil")
+    @GetMapping(value = "/{id}/profil")
     public ResponseEntity<NGHostResponseDTO> getProfil(
-            @RequestHeader(value = "Authorization") String token
-    ) throws NGHost400Exception {
-        String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
-        return ResponseEntity.ok(userService.getProfil(username));
+            @RequestHeader(value = "Authorization") String token,
+            @PathVariable("id") long userId
+    ) throws NGHost400Exception, NGHost401Exception {
+
+        userService.checkUserIdentity(token, userId);
+        return ResponseEntity.ok(userService.getProfil(userId));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
@@ -46,13 +46,10 @@ public class UserController {
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("id") long userId,
             @RequestBody UserProfilDTO userProfilDTO
-    ) throws NGHost400Exception {
-        String username = jwtUtil.getUsernameFromToken(token.substring(TOKEN_PREFIX.length()));
-        return ResponseEntity.ok(userService.patchProfil(
-                        username,
-                        userId,
-                        userProfilDTO
-                )
+    ) throws NGHost400Exception, NGHost401Exception {
+
+        userService.checkUserIdentity(token, userId);
+        return ResponseEntity.ok(userService.patchProfil(userProfilDTO)
         );
     }
 
@@ -62,9 +59,18 @@ public class UserController {
             @RequestHeader(value = "Authorization") String token,
             @PathVariable("id") long userId,
             @RequestBody PatchPasswordDTO passwordDTO
-    ) throws NGHost400Exception,NGHost401Exception {
+    ) throws NGHost400Exception, NGHost401Exception {
 
         userService.checkUserIdentity(token, userId);
         return ResponseEntity.ok(userService.patchPassword(passwordDTO));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @PatchMapping("/{id}/is-active")
+    public ResponseEntity<NGHostResponseDTO> desableUserAccount(
+            @PathVariable("id") long userId
+    ) throws NGHost400Exception {
+
+        return ResponseEntity.ok(userService.desableAccount(userId));
     }
 }
