@@ -30,14 +30,11 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    @GetMapping(value = "/{id}/profil")
+    @GetMapping(value = "/profil")
     public ResponseEntity<NGHostResponseDTO> getProfil(
-            @RequestHeader(value = "Authorization") String token,
-            @PathVariable("id") long userId
-    ) throws NGHost400Exception, NGHost401Exception {
-
-        userService.checkUserIdentity(token, userId);
-        return ResponseEntity.ok(userService.getProfil(userId));
+            @RequestHeader(value = "Authorization") String token
+    ) throws NGHost400Exception {
+        return ResponseEntity.ok(userService.getProfil(token));
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
@@ -66,7 +63,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
-    @PatchMapping("/{id}/is-active")
+    @DeleteMapping("/{id}/is-active")
     public ResponseEntity<NGHostResponseDTO> desableUserAccount(
             @PathVariable("id") long userId
     ) throws NGHost400Exception {

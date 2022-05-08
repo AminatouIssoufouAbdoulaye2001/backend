@@ -30,7 +30,6 @@ public class UserAccountDTO {
        user.setFullName(dto.getFullName());
        user.setEmail(dto.getEmail());
        user.setPassword(dto.getPassword());
-
        return user;
     }
 }

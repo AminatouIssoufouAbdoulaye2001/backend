@@ -1,6 +1,5 @@
 package Pfe.SpringBoot.BackEnd.dtos;
 
-
 import Pfe.SpringBoot.BackEnd.entities.User;
 import lombok.Data;
 

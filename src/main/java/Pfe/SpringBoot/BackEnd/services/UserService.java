@@ -85,14 +85,18 @@ public class UserService {
         return new NGHostResponseDTO(jwtUtil.generateToken(userDetails));
     }
 
-    public NGHostResponseDTO getProfil(final long userId) throws NGHost400Exception {
+    public NGHostResponseDTO getProfil(final String token) throws NGHost400Exception {
 
-        Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent()) {
+        String username = jwtUtil.getUsernameFromToken(
+                token.replace(TOKEN_PREFIX, "")
+        );
+
+        Optional<User> optionalUser = userRepository.findByUserName(username);
+        if (!optionalUser.isPresent()) {
             throw new NGHost400Exception("L' utilisateur introuvable");
         }
 
-        UserProfilDTO userProfil = new UserProfilDTO(user.get());
+        UserProfilDTO userProfil = new UserProfilDTO(optionalUser.get());
         return new NGHostResponseDTO(userProfil);
     }
 
