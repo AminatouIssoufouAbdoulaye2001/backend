@@ -9,6 +9,8 @@ import javax.persistence.*;
 @Data
 public class User {
 
+    private long idPlesk;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

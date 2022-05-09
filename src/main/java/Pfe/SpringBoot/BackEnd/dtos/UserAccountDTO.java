@@ -8,6 +8,9 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 public class UserAccountDTO {
+
+    private long idPlesk;
+
     @NotBlank(message = "le username est obligatoire")
     private String userName;
 
@@ -30,6 +33,8 @@ public class UserAccountDTO {
        user.setFullName(dto.getFullName());
        user.setEmail(dto.getEmail());
        user.setPassword(dto.getPassword());
+       user.setIdPlesk(dto.getIdPlesk());
+
        return user;
     }
 }
