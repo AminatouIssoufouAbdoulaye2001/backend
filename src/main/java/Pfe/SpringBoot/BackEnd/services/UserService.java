@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -98,6 +100,19 @@ public class UserService {
 
         UserProfilDTO userProfil = new UserProfilDTO(optionalUser.get());
         return new NGHostResponseDTO(userProfil);
+    }
+
+    public NGHostResponseDTO getCustomer() {
+        List<UserProfilDTO> users = new ArrayList<>();
+
+        for( User user: userRepository.findAll()) {
+            if (user.getIdPlesk() !=  0) {
+                UserProfilDTO profil = new UserProfilDTO(user);
+                users.add(profil);
+            }
+        }
+
+        return new NGHostResponseDTO(users);
     }
 
     public NGHostResponseDTO patchProfil(UserProfilDTO userProfilDTO)

@@ -10,6 +10,8 @@ import javax.validation.constraints.NotBlank;
 public class UserProfilDTO {
     private long id;
 
+    private long idPlesk;
+
     @NotBlank(message = "le username est obligatoire")
     private String username;
 
@@ -31,5 +33,6 @@ public class UserProfilDTO {
         this.fullName = user.getFullName();
         this.email = user.getEmail();
         this.phone = user.getPhone();
+        this.idPlesk = user.getIdPlesk();
     }
 }

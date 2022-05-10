@@ -70,4 +70,10 @@ public class UserController {
 
         return ResponseEntity.ok(userService.desableAccount(userId));
     }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping(value = "/customers")
+    public ResponseEntity<NGHostResponseDTO> getCustomer() {
+        return ResponseEntity.ok(this.userService.getCustomer());
+    }
 }
