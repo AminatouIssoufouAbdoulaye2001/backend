@@ -1,29 +1,37 @@
 package Pfe.SpringBoot.BackEnd.entities;
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity(name = "service")
+@Entity(name = "services")
+@Data
 public class Service {
 
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   private Long id;
 
-  private int nbrecoeur;
-
-  private String memorySpace;
-
-  private String adressIp;
+  private String name;
 
   private String bandwidth;
 
-  private int Licence;
-
-  private String os;
+  private String domain;
 
   private float price;
+
+  private int nbCore;
+
+  private int nbEmail;
+
+  private int ram;
+
+  private int nbDatabase;
+
+  private String memorySpace;
+
 }
 
