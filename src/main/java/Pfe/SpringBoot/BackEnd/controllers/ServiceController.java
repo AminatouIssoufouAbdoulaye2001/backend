@@ -1,35 +1,57 @@
 package Pfe.SpringBoot.BackEnd.controllers;
 
+import Pfe.SpringBoot.BackEnd.dtos.GetServiceDTO;
 import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
+import Pfe.SpringBoot.BackEnd.dtos.PostServiceDTO;
+import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.services.ServiceService;
-import org.hibernate.service.spi.ServiceRegistryAwareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
 @RequestMapping(value = "/api/v1/services")
 public class ServiceController {
 
     @Autowired
-    private static ServiceService serviceService;
+    ServiceService productService;
 
-    public ResponseEntity<NGHostResponseDTO> postService() {
-
-        return ResponseEntity.ok(new NGHostResponseDTO(null));
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping()
+    public ResponseEntity<NGHostResponseDTO> postService(@RequestBody PostServiceDTO dto) {
+        return ResponseEntity.ok(
+                productService.create(dto)
+        );
     }
 
-    public ResponseEntity<NGHostResponseDTO> patchService() {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<NGHostResponseDTO> patchService(
+            @PathVariable("id") long serviceId,
+            @RequestBody GetServiceDTO dto
+    ) throws NGHost400Exception {
 
-        return ResponseEntity.ok(new NGHostResponseDTO(null));
+        return ResponseEntity.ok(
+                productService.update(serviceId, dto)
+        );
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping
     public ResponseEntity<NGHostResponseDTO> getServices() {
-
-        return ResponseEntity.ok(new NGHostResponseDTO(null));
+        return ResponseEntity.ok(
+                productService.getAll()
+        );
     }
 
-    public ResponseEntity<NGHostResponseDTO> delete() {
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<NGHostResponseDTO> delete(@PathVariable("id") long serviceId)
+            throws NGHost400Exception {
 
-        return ResponseEntity.ok(new NGHostResponseDTO(null));
+        return ResponseEntity.ok(
+                this.productService.delete(serviceId)
+        );
     }
 }

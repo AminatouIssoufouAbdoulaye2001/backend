@@ -5,12 +5,9 @@ import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.PostServiceDTO;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.repositories.ServiceRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +15,7 @@ import java.util.Optional;
 @Service
 public class ServiceService {
     @Autowired
-    private static ServiceRepository serviceRepository;
+    ServiceRepository serviceRepository;
 
     public NGHostResponseDTO create(PostServiceDTO dto) {
 
@@ -28,7 +25,11 @@ public class ServiceService {
         return new NGHostResponseDTO(new GetServiceDTO(service));
     }
 
-    public NGHostResponseDTO update(GetServiceDTO dto) throws NGHost400Exception{
+    public NGHostResponseDTO update(long id, GetServiceDTO dto) throws NGHost400Exception {
+
+        if (id != dto.getId()) {
+            throw new NGHost400Exception(" Conflits des identifiants");
+        }
 
         Optional<Pfe.SpringBoot.BackEnd.entities.Service> optionalService = serviceRepository.findById(dto.getId());
         if (!optionalService.isPresent()) {
@@ -43,23 +44,25 @@ public class ServiceService {
     }
 
     public NGHostResponseDTO getAll() {
-        List<GetServiceDTO> services =  new ArrayList<>();
+        List<GetServiceDTO> services = new ArrayList<>();
 
-        for (Pfe.SpringBoot.BackEnd.entities.Service service: serviceRepository.findAll()) {
+        for (Pfe.SpringBoot.BackEnd.entities.Service service : serviceRepository.findAll()) {
             services.add(
-              new GetServiceDTO(service)
+                    new GetServiceDTO(service)
             );
         }
 
         return new NGHostResponseDTO(services);
     }
 
-    public NGHostResponseDTO delete(long id) throws NGHost400Exception{
+    public NGHostResponseDTO delete(long id) throws NGHost400Exception {
 
         Optional<Pfe.SpringBoot.BackEnd.entities.Service> optionalService = serviceRepository.findById(id);
         if (!optionalService.isPresent()) {
             throw new NGHost400Exception("Le service n'existe pas");
         }
+
+        serviceRepository.delete(optionalService.get());
         GetServiceDTO dto = new GetServiceDTO(optionalService.get());
 
         return new NGHostResponseDTO(dto);

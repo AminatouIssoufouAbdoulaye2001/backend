@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class PostServiceDTO {
+
     private String name;
 
     private String bandwidth;
@@ -52,7 +53,8 @@ public class PostServiceDTO {
         service.setRam(this.getRam());
         service.setNbDatabase(this.getNbDatabase());
         service.setMemorySpace(this.getMemorySpace());
-
+        service.setBandwidth(this.getBandwidth());
         return service;
     }
 }
+
