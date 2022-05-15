@@ -18,10 +18,9 @@ public class PostServiceDTO {
 
     private int nbEmail;
 
-    private int ram;
 
     private int nbDatabase;
-
+    private String ram;
     private String memorySpace;
 
     public PostServiceDTO() {

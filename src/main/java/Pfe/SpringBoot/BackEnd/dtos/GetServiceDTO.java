@@ -20,7 +20,7 @@ public class GetServiceDTO {
 
     private int nbEmail;
 
-    private int ram;
+    private String ram;
 
     private int nbDatabase;
 

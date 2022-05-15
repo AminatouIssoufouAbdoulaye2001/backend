@@ -37,7 +37,6 @@ public class ServiceController {
         );
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<NGHostResponseDTO> getServices() {
         return ResponseEntity.ok(

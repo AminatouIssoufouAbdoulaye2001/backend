@@ -27,7 +27,7 @@ public class Service {
 
   private int nbEmail;
 
-  private int ram;
+  private String ram;
 
   private int nbDatabase;
 
