@@ -21,7 +21,10 @@ public class UserProfilDTO {
     @NotBlank(message = "l'adresse email est obligatoire")
     @Email(message = "le format de l'adresse n'est pas valid")
     private String email;
+
     private String phone;
+
+    private String img;
 
     public UserProfilDTO() {
 
@@ -34,5 +37,6 @@ public class UserProfilDTO {
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.idPlesk = user.getIdPlesk();
+        this.img = user.getImg();
     }
 }

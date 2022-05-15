@@ -30,5 +30,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private ERole role;
 
+    @Column(columnDefinition="TEXT")
+    private String img;
+
     private boolean isActive;
 }

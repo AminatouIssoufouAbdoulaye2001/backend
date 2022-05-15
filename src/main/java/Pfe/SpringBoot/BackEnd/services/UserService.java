@@ -140,7 +140,7 @@ public class UserService {
         user.setFullName(userProfilDTO.getFullName());
         user.setEmail(userProfilDTO.getEmail());
         user.setPhone(userProfilDTO.getPhone());
-
+        user.setImg(userProfilDTO.getImg());
         userRepository.save(user);
         return new NGHostResponseDTO(userProfilDTO);
     }
