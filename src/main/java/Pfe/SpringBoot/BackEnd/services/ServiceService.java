@@ -55,6 +55,18 @@ public class ServiceService {
         return new NGHostResponseDTO(services);
     }
 
+    public NGHostResponseDTO getOne(long serviceId) throws NGHost400Exception{
+        Optional<Pfe.SpringBoot.BackEnd.entities.Service>  optionalService = serviceRepository
+                .findById(serviceId);
+        if (!optionalService.isPresent()) {
+            throw new NGHost400Exception(" Service non trouvéé");
+        }
+
+        return new NGHostResponseDTO(
+                new GetServiceDTO(optionalService.get())
+        );
+    }
+
     public NGHostResponseDTO delete(long id) throws NGHost400Exception {
 
         Optional<Pfe.SpringBoot.BackEnd.entities.Service> optionalService = serviceRepository.findById(id);

@@ -37,10 +37,12 @@ public class ServiceController {
         );
     }
 
-    @GetMapping
-    public ResponseEntity<NGHostResponseDTO> getServices() {
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<NGHostResponseDTO> getOne(@PathVariable("id") long id)
+            throws NGHost400Exception {
         return ResponseEntity.ok(
-                productService.getAll()
+                productService.getOne(id)
         );
     }
 
@@ -51,6 +53,13 @@ public class ServiceController {
 
         return ResponseEntity.ok(
                 this.productService.delete(serviceId)
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<NGHostResponseDTO> getServices() {
+        return ResponseEntity.ok(
+                productService.getAll()
         );
     }
 }
