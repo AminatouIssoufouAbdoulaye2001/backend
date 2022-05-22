@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/v1/services")
 public class ServiceController {
@@ -61,5 +63,27 @@ public class ServiceController {
         return ResponseEntity.ok(
                 productService.getAll()
         );
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
+    @PostMapping("/subscribe")
+    public ResponseEntity<NGHostResponseDTO> subscribeToServices(
+            @RequestHeader(value = "Authorization") String token,
+            @RequestBody List<Long> servicesIds
+    ) throws NGHost400Exception {
+        return ResponseEntity.ok(productService.subscribeToService(
+                token,
+                servicesIds
+        ));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
+    @GetMapping("/subscribe")
+    public ResponseEntity<NGHostResponseDTO> getSubscribedServices(
+            @RequestHeader(value = "Authorization") String token
+    ) throws NGHost400Exception {
+        return ResponseEntity.ok(productService.getCustomerSubscribedProduct(
+                token
+        ));
     }
 }

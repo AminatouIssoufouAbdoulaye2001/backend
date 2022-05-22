@@ -1,24 +1,31 @@
 package Pfe.SpringBoot.BackEnd.entities;
 
-import Pfe.SpringBoot.BackEnd.constantes.ProductType;
+import lombok.Data;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity(name = "abonnements")
+@Data
 public class Abonnement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ABONNEMENT_ID")
     private Long id;
 
-    private String nomDuProduit;
-
-    @Enumerated(EnumType.STRING)
-    private ProductType typeProduit;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "subscribe_services",
+            joinColumns = { @JoinColumn(name = "abonnement_id") },
+            inverseJoinColumns = { @JoinColumn(name = "service_id") })
+    private List<Service> services;
 
     private Date dateDebut;
 
     private Date dateFin;
 
-    private boolean isPaid;
+    private String customerEmail;
+
+    private float price;
 }
