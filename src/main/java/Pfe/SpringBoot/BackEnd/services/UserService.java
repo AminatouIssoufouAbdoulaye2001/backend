@@ -76,13 +76,18 @@ public class UserService {
     }
 
     public NGHostResponseDTO login(LoginDTO loginDTO) throws NGHost401Exception {
+        sleepLoginExecution(loginDTO.getUserName());
+
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginDTO.getUserName(), loginDTO.getPassword());
         try {
             authManager.authenticate(authentication);
         } catch (AuthenticationException e) {
+            incrementFailedAttemtedLogin(loginDTO.getUserName());
             throw new NGHost401Exception("Le username ou le mot de passe est invalid");
         }
+
         UserDetails userDetails = jwtUserDetailService.loadUserByUsername(loginDTO.getUserName());
+        resetLoginExecution(loginDTO.getUserName());
 
         return new NGHostResponseDTO(jwtUtil.generateToken(userDetails));
     }
@@ -105,8 +110,8 @@ public class UserService {
     public NGHostResponseDTO getCustomer() {
         List<UserProfilDTO> users = new ArrayList<>();
 
-        for( User user: userRepository.findAll()) {
-            if (user.getIdPlesk() !=  0) {
+        for (User user : userRepository.findAll()) {
+            if (user.getIdPlesk() != 0) {
                 UserProfilDTO profil = new UserProfilDTO(user);
                 users.add(profil);
             }
@@ -166,7 +171,7 @@ public class UserService {
         return new NGHostResponseDTO("Le mot de passe a été modifié");
     }
 
-    public NGHostResponseDTO desableAccount(long userId) throws NGHost400Exception{
+    public NGHostResponseDTO desableAccount(long userId) throws NGHost400Exception {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (!optionalUser.isPresent()) {
             throw new NGHost400Exception("Utilisateur non identifié");
@@ -176,7 +181,7 @@ public class UserService {
         user.setActive(false);
         userRepository.save(user);
 
-        return  new NGHostResponseDTO("Le compte a été désactivé");
+        return new NGHostResponseDTO("Le compte a été désactivé");
     }
 
     public void checkUserIdentity(String token, long userId) throws NGHost401Exception {
@@ -196,4 +201,48 @@ public class UserService {
             throw new NGHost401Exception(UNAUTHORIZED_MESSAGE);
         }
     }
+
+    /***
+     * augmente le nombre d'échec de connexion
+     * @param username
+     */
+
+    private void incrementFailedAttemtedLogin(String username) {
+        Optional<User> userOptional = userRepository.findByUserName(username);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user.getAttemtedLogin() < 3) {
+                user.setAttemtedLogin(user.getAttemtedLogin() + 1);
+                userRepository.save(user);
+            }
+        }
+    }
+
+    /***
+     * sleep le processus le login une fois que le nombre d'échec de connection est atteinte.
+     */
+    private void sleepLoginExecution(String username) {
+        Optional<User> optUser = userRepository.findByUserName(username);
+        if (optUser.isPresent()) {
+            if (optUser.get().getAttemtedLogin() == 3) {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void resetLoginExecution(String username) {
+        Optional<User> optUser = userRepository.findByUserName(username);
+        if (optUser.isPresent()) {
+            if (optUser.get().getAttemtedLogin() != 0) {
+                User user = optUser.get();
+                user.setAttemtedLogin(0);
+                userRepository.save(user);
+            }
+        }
+    }
+
 }

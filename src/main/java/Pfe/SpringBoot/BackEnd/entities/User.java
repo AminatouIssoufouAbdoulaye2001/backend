@@ -33,5 +33,7 @@ public class User {
     @Lob
     private String img;
 
+    private int attemtedLogin;
+
     private boolean isActive;
 }
