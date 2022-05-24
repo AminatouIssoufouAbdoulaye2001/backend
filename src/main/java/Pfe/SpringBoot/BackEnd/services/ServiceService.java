@@ -1,9 +1,7 @@
 package Pfe.SpringBoot.BackEnd.services;
 
 import Pfe.SpringBoot.BackEnd.configurations.jwt.JWTUtil;
-import Pfe.SpringBoot.BackEnd.dtos.GetServiceDTO;
-import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
-import Pfe.SpringBoot.BackEnd.dtos.PostServiceDTO;
+import Pfe.SpringBoot.BackEnd.dtos.*;
 import Pfe.SpringBoot.BackEnd.entities.Abonnement;
 import Pfe.SpringBoot.BackEnd.entities.User;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
@@ -13,9 +11,8 @@ import Pfe.SpringBoot.BackEnd.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.sql.Timestamp;
+import java.util.*;
 
 @Service
 public class ServiceService {
@@ -128,13 +125,13 @@ public class ServiceService {
 
         abon.setPrice(totalPrice);
         abon.setServices(services);
+        setSubscribePeriode(abon);
         AbonRepository.save(abon);
 
         return new NGHostResponseDTO(null);
     }
 
-
-    public NGHostResponseDTO getCustomerSubscribedProduct(String token)  throws NGHost400Exception{
+    public NGHostResponseDTO getCustomerSubscribedProduct(String token) throws NGHost400Exception {
         String username = jwtUtil.getUsernameFromToken(
                 token.replace(TOKEN_PREFIX, "")
         );
@@ -144,16 +141,47 @@ public class ServiceService {
             throw new NGHost400Exception("L' utilisateur introuvable");
         }
 
-        List<GetServiceDTO> services = new ArrayList<>();
+        List<SubcribebProductDTO> services = new ArrayList<>();
 
         for (Abonnement abon : AbonRepository.findByCustomerEmail(optionalUser.get().getEmail())) {
-          for( Pfe.SpringBoot.BackEnd.entities.Service service: abon.getServices()) {
-              services.add(
-                      new GetServiceDTO(service)
-              );
-          }
+            for (Pfe.SpringBoot.BackEnd.entities.Service service : abon.getServices()) {
+                SubcribebProductDTO dto = new SubcribebProductDTO(service);
+                dto.setDateDebut(abon.getDateDebut());
+                dto.setDateFin(abon.getDateFin());
+                services.add(dto);
+            }
         }
 
-        return  new NGHostResponseDTO(services);
+        return new NGHostResponseDTO(services);
+    }
+
+    public NGHostResponseDTO getSubscriptions() {
+        List<GetAbonnement> subscriptions = new ArrayList<>();
+
+        for (Abonnement subscription : AbonRepository.findAll()) {
+           subscriptions.add(new GetAbonnement(subscription));
+        }
+
+        return new NGHostResponseDTO(subscriptions);
+    }
+
+    private void setSubscribePeriode(Abonnement abon) {
+        Date beginDate = new Date();
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(beginDate);
+        c.add(Calendar.YEAR, 1);
+        Date endDate = c.getTime();
+
+        Timestamp timestampBeginDate = new Timestamp(beginDate.getTime());
+        Timestamp timestampEndDate = new Timestamp(endDate.getTime());
+
+        abon.setDateDebut(
+                timestampBeginDate.getTime()
+        );
+
+        abon.setDateFin(
+                timestampEndDate.getTime()
+        );
     }
 }

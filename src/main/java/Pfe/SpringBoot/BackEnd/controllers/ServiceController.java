@@ -86,4 +86,12 @@ public class ServiceController {
                 token
         ));
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @GetMapping("/subscriptions")
+    public ResponseEntity<NGHostResponseDTO> getSubscriptions() {
+        return ResponseEntity.ok(
+                productService.getSubscriptions()
+        );
+    }
 }

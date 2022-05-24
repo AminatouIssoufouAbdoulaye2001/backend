@@ -21,9 +21,9 @@ public class Abonnement {
             inverseJoinColumns = { @JoinColumn(name = "service_id") })
     private List<Service> services;
 
-    private Date dateDebut;
+    private  long dateDebut;
 
-    private Date dateFin;
+    private long dateFin;
 
     private String customerEmail;
 
