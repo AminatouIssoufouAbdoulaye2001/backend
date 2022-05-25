@@ -3,14 +3,17 @@ package Pfe.SpringBoot.BackEnd.services;
 import Pfe.SpringBoot.BackEnd.configurations.jwt.JWTUtil;
 import Pfe.SpringBoot.BackEnd.dtos.*;
 import Pfe.SpringBoot.BackEnd.entities.Abonnement;
+import Pfe.SpringBoot.BackEnd.entities.Domaine;
 import Pfe.SpringBoot.BackEnd.entities.User;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
 import Pfe.SpringBoot.BackEnd.repositories.AbonnementRepository;
+import Pfe.SpringBoot.BackEnd.repositories.DomainRepository;
 import Pfe.SpringBoot.BackEnd.repositories.ServiceRepository;
 import Pfe.SpringBoot.BackEnd.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -19,6 +22,8 @@ public class ServiceService {
 
     @Autowired
     private JWTUtil jwtUtil;
+    @Autowired
+     DomainRepository domainRepository;
 
     @Autowired
     ServiceRepository serviceRepository;
@@ -184,4 +189,60 @@ public class ServiceService {
                 timestampEndDate.getTime()
         );
     }
+    private void setDomainPeriode(Domaine domain) {
+        Date beginDate = new Date();
+
+        Calendar c = Calendar.getInstance();
+        c.setTime(beginDate);
+        c.add(Calendar.YEAR, 1);
+        Date endDate = c.getTime();
+
+        Timestamp timestampBeginDate = new Timestamp(beginDate.getTime());
+        Timestamp timestampEndDate = new Timestamp(endDate.getTime());
+
+        domain.setDateDebut(
+                timestampBeginDate.getTime()
+        );
+
+        domain.setDateFin(
+                timestampEndDate.getTime()
+        );
+    }
+
+    public NGHostResponseDTO SaveDomain(Godaddy godaddy ,String token)throws NGHost400Exception {
+        String username = jwtUtil.getUsernameFromToken(
+                token.replace(TOKEN_PREFIX, "")
+        );
+
+        Optional<User> optionalUser = userRepository.findByUserName(username);
+        if (!optionalUser.isPresent()) {
+            throw new NGHost400Exception("L' utilisateur introuvable");
+        }
+
+        Domaine d=new Domaine();
+        d.setPrix(godaddy.getPrice());
+        d.setCustomer(optionalUser.get().getEmail());
+        d.setStatut("Actif");
+        d.setNom(godaddy.getDomain());
+        setDomainPeriode(d);
+        domainRepository.save(d);
+        return new NGHostResponseDTO(null);
+
+    }
+public NGHostResponseDTO getAllDomain(){
+        return new NGHostResponseDTO(domainRepository.findAll());
+}
+public NGHostResponseDTO ClientDomain(String token) throws NGHost400Exception{
+    String username = jwtUtil.getUsernameFromToken(
+            token.replace(TOKEN_PREFIX, "")
+    );
+
+    Optional<User> optionalUser = userRepository.findByUserName(username);
+    if (!optionalUser.isPresent()) {
+        throw new NGHost400Exception("L' utilisateur introuvable");
+    }
+       return new NGHostResponseDTO(domainRepository.findAllByCustomer(optionalUser.get().getEmail()));
+}
+
+
 }

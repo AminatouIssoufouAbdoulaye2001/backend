@@ -1,6 +1,7 @@
 package Pfe.SpringBoot.BackEnd.controllers;
 
 import Pfe.SpringBoot.BackEnd.dtos.GetServiceDTO;
+import Pfe.SpringBoot.BackEnd.dtos.Godaddy;
 import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.PostServiceDTO;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
@@ -65,17 +66,7 @@ public class ServiceController {
         );
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
-    @PostMapping("/subscribe")
-    public ResponseEntity<NGHostResponseDTO> subscribeToServices(
-            @RequestHeader(value = "Authorization") String token,
-            @RequestBody List<Long> servicesIds
-    ) throws NGHost400Exception {
-        return ResponseEntity.ok(productService.subscribeToService(
-                token,
-                servicesIds
-        ));
-    }
+
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
     @GetMapping("/subscribe")
@@ -94,4 +85,33 @@ public class ServiceController {
                 productService.getSubscriptions()
         );
     }
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
+    @GetMapping("/save-domain")
+    public ResponseEntity<NGHostResponseDTO> SaveDomain(
+            @RequestHeader(value = "Authorization") String token,
+            Godaddy godaddy
+    ) throws NGHost400Exception {
+        return ResponseEntity.ok(productService.SaveDomain(
+                godaddy,
+                token
+        ));
+    }
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
+    @GetMapping("/domaines")
+    public ResponseEntity<NGHostResponseDTO> GetAllDomain(
+
+    ) throws NGHost400Exception {
+        return ResponseEntity.ok(productService.getAllDomain());
+    }
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
+    @GetMapping("/client-domain")
+    public ResponseEntity<NGHostResponseDTO> getClientDomain(
+            @RequestHeader(value = "Authorization") String token
+    ) throws NGHost400Exception {
+        return ResponseEntity.ok(productService.ClientDomain(
+                token
+        ));
+    }
+
+
 }
