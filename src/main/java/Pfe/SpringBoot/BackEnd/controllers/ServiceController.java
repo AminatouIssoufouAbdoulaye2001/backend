@@ -86,10 +86,10 @@ public class ServiceController {
         );
     }
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
-    @GetMapping("/save-domain")
+    @PostMapping("/save-domain")
     public ResponseEntity<NGHostResponseDTO> SaveDomain(
             @RequestHeader(value = "Authorization") String token,
-            Godaddy godaddy
+            @RequestBody Godaddy godaddy
     ) throws NGHost400Exception {
         return ResponseEntity.ok(productService.SaveDomain(
                 godaddy,
@@ -103,6 +103,7 @@ public class ServiceController {
     ) throws NGHost400Exception {
         return ResponseEntity.ok(productService.getAllDomain());
     }
+
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
     @GetMapping("/client-domain")
     public ResponseEntity<NGHostResponseDTO> getClientDomain(
@@ -112,6 +113,4 @@ public class ServiceController {
                 token
         ));
     }
-
-
 }

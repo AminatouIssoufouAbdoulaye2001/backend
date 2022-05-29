@@ -15,12 +15,10 @@ public class Domaine {
     private Long id;
 
     private String nom;
-private long dateDebut ;
-private long dateFin ;
-private  String statut ;
-private float prix;
-private String customer;
+    private long dateDebut;
+    private long dateFin;
+    private String statut;
+    private float prix;
+    private String customer;
     private String adresse;
-
-
 }

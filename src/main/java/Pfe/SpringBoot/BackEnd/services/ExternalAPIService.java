@@ -3,14 +3,18 @@ package Pfe.SpringBoot.BackEnd.services;
 import Pfe.SpringBoot.BackEnd.dtos.Godaddy;
 import Pfe.SpringBoot.BackEnd.dtos.GodaddyAvailableDomainsResponseDTO;
 import Pfe.SpringBoot.BackEnd.dtos.NGHostResponseDTO;
+import Pfe.SpringBoot.BackEnd.entities.Domaine;
 import Pfe.SpringBoot.BackEnd.exceptions.NGHost400Exception;
+import Pfe.SpringBoot.BackEnd.repositories.DomainRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,6 +27,9 @@ public class ExternalAPIService {
 
     @Value(value = "${godaddy.secret}")
     private String godaddySECRET;
+
+    @Autowired
+    DomainRepository domainRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -77,8 +84,27 @@ public class ExternalAPIService {
                     );
 
             if (response.getStatusCodeValue() == 200) {
-                res.setPayload(response.getBody());
+                List<String> domainsNames = new ArrayList<>();
+                Iterable<Domaine> subscribedDomains = domainRepository.findAll();
 
+                for (Domaine itDomaine : subscribedDomains) {
+                    domainsNames.add(
+                            itDomaine.getNom()
+                    );
+                }
+
+                res.setPayload(response.getBody().getDomains());
+                if (!domainsNames.isEmpty()) {
+                    List<Godaddy> domainsList = new ArrayList<>();
+                    for (Godaddy godaddy : response.getBody().getDomains()) {
+                        if (!domainsNames.contains(godaddy.getDomain())) {
+                            domainsList.add(godaddy);
+                        }
+                    }
+
+                    res.setPayload(domainsList);
+
+                }
                 res.setSuccess(true);
             } else {
                 res.setSuccess(false);

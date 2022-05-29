@@ -13,7 +13,6 @@ import Pfe.SpringBoot.BackEnd.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Null;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -23,7 +22,7 @@ public class ServiceService {
     @Autowired
     private JWTUtil jwtUtil;
     @Autowired
-     DomainRepository domainRepository;
+    DomainRepository domainRepository;
 
     @Autowired
     ServiceRepository serviceRepository;
@@ -164,7 +163,7 @@ public class ServiceService {
         List<GetAbonnement> subscriptions = new ArrayList<>();
 
         for (Abonnement subscription : AbonRepository.findAll()) {
-           subscriptions.add(new GetAbonnement(subscription));
+            subscriptions.add(new GetAbonnement(subscription));
         }
 
         return new NGHostResponseDTO(subscriptions);
@@ -189,6 +188,7 @@ public class ServiceService {
                 timestampEndDate.getTime()
         );
     }
+
     private void setDomainPeriode(Domaine domain) {
         Date beginDate = new Date();
 
@@ -209,7 +209,7 @@ public class ServiceService {
         );
     }
 
-    public NGHostResponseDTO SaveDomain(Godaddy godaddy ,String token)throws NGHost400Exception {
+    public NGHostResponseDTO SaveDomain(Godaddy godaddy, String token) throws NGHost400Exception {
         String username = jwtUtil.getUsernameFromToken(
                 token.replace(TOKEN_PREFIX, "")
         );
@@ -219,7 +219,7 @@ public class ServiceService {
             throw new NGHost400Exception("L' utilisateur introuvable");
         }
 
-        Domaine d=new Domaine();
+        Domaine d = new Domaine();
         d.setPrix(godaddy.getPrice());
         d.setCustomer(optionalUser.get().getEmail());
         d.setStatut("Actif");
@@ -229,20 +229,21 @@ public class ServiceService {
         return new NGHostResponseDTO(null);
 
     }
-public NGHostResponseDTO getAllDomain(){
+
+    public NGHostResponseDTO getAllDomain() {
         return new NGHostResponseDTO(domainRepository.findAll());
-}
-public NGHostResponseDTO ClientDomain(String token) throws NGHost400Exception{
-    String username = jwtUtil.getUsernameFromToken(
-            token.replace(TOKEN_PREFIX, "")
-    );
-
-    Optional<User> optionalUser = userRepository.findByUserName(username);
-    if (!optionalUser.isPresent()) {
-        throw new NGHost400Exception("L' utilisateur introuvable");
     }
-       return new NGHostResponseDTO(domainRepository.findAllByCustomer(optionalUser.get().getEmail()));
-}
 
+    public NGHostResponseDTO ClientDomain(String token) throws NGHost400Exception {
+        String username = jwtUtil.getUsernameFromToken(
+                token.replace(TOKEN_PREFIX, "")
+        );
+
+        Optional<User> optionalUser = userRepository.findByUserName(username);
+        if (!optionalUser.isPresent()) {
+            throw new NGHost400Exception("L' utilisateur introuvable");
+        }
+        return new NGHostResponseDTO(domainRepository.findAllByCustomer(optionalUser.get().getEmail()));
+    }
 
 }

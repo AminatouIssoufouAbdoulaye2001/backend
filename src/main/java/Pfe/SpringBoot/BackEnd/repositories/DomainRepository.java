@@ -11,5 +11,4 @@ import java.util.List;
 @Transactional
 public interface DomainRepository extends CrudRepository<Domaine, Long> {
         List<Domaine> findAllByCustomer(String customer);
-
 }
