@@ -77,7 +77,12 @@ public class ServiceController {
                 token
         ));
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
+    @PostMapping("/subscribe")
+    public ResponseEntity<NGHostResponseDTO> subscribeToServices(
+            @RequestHeader(value = "Authorization") String token,
+            @RequestBody List<Long> servicesIds ) throws NGHost400Exception {
+        return ResponseEntity.ok(productService.subscribeToService( token, servicesIds )); }
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping("/subscriptions")
     public ResponseEntity<NGHostResponseDTO> getSubscriptions() {
