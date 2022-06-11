@@ -66,8 +66,6 @@ public class ServiceController {
         );
     }
 
-
-
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_CLIENT')")
     @GetMapping("/subscribe")
     public ResponseEntity<NGHostResponseDTO> getSubscribedServices(

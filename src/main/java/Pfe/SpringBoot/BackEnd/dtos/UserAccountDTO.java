@@ -26,7 +26,7 @@ public class UserAccountDTO {
 
     @NotBlank(message = "la confirmation du mot de passe est obligatoire est obligatoire")
     private String passwordConf;
-
+private String organisation;
     public static User dtoToModel(UserAccountDTO dto) {
        User user = new User();
        user.setUserName(dto.getUserName());
@@ -34,7 +34,8 @@ public class UserAccountDTO {
        user.setEmail(dto.getEmail());
        user.setPassword(dto.getPassword());
        user.setIdPlesk(dto.getIdPlesk());
-
+       user.setOrganisation(dto.getOrganisation());
        return user;
     }
+
 }

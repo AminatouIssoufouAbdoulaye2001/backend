@@ -125,7 +125,7 @@ public class UserService {
 
         Set<ConstraintViolation<UserProfilDTO>> violations = validator.validate(userProfilDTO);
         if (!violations.isEmpty()) {
-            // retourner la première contrainte non vérifiéeu
+            // retourner la première contrainte non vérifiée
             ConstraintViolation<UserProfilDTO> constraintViolation =
                     violations.stream().findFirst().get();
             throw new NGHost400Exception(constraintViolation.getMessage());
@@ -146,7 +146,10 @@ public class UserService {
         user.setEmail(userProfilDTO.getEmail());
         user.setPhone(userProfilDTO.getPhone());
         user.setImg(userProfilDTO.getImg());
+        user.setOrganisation(userProfilDTO.getOrganisation());
         userRepository.save(user);
+
+
         return new NGHostResponseDTO(userProfilDTO);
     }
 

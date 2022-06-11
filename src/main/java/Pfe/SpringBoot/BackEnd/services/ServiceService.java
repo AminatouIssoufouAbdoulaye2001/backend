@@ -162,8 +162,13 @@ public class ServiceService {
     public NGHostResponseDTO getSubscriptions() {
         List<GetAbonnement> subscriptions = new ArrayList<>();
 
-        for (Abonnement subscription : AbonRepository.findAll()) {
-            subscriptions.add(new GetAbonnement(subscription));
+        try{
+            List<Abonnement> abonList = AbonRepository.findAll();
+            for (Abonnement subscription : abonList) {
+                subscriptions.add(new GetAbonnement(subscription));
+            }
+        } catch(Exception ex) {
+            ex.printStackTrace();
         }
 
         return new NGHostResponseDTO(subscriptions);

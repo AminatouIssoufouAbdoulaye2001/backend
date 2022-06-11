@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface AbonnementRepository extends CrudRepository<Abonnement, Long> {
     List<Abonnement> findByCustomerEmail(String email);
+    List<Abonnement> findAll();
+
 }

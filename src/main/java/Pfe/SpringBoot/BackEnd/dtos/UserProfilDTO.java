@@ -23,7 +23,7 @@ public class UserProfilDTO {
     private String email;
 
     private String phone;
-
+private String organisation;
     private String img;
 
     public UserProfilDTO() {
@@ -38,5 +38,8 @@ public class UserProfilDTO {
         this.phone = user.getPhone();
         this.idPlesk = user.getIdPlesk();
         this.img = user.getImg();
+        this.organisation=user.getOrganisation();
     }
+
+   
 }

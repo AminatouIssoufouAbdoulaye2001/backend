@@ -23,7 +23,11 @@ public class GetAbonnement {
 
     public GetAbonnement(Abonnement subcription) {
         this.id = subcription.getId();
-        this.name = subcription.getServices().get(0).getName();
+        if(subcription.getServices().size() > 0) {
+            this.name = subcription.getServices().get(0).getName();
+        } else {
+            this.name = "service";
+        }
         this.price = subcription.getPrice();
         this.customerEmail = subcription.getCustomerEmail();
         this.startedDate = subcription.getDateDebut();

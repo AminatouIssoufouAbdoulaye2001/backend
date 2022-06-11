@@ -26,10 +26,9 @@ public class User {
     private String phone;
 
     private String password;
-
+private String Organisation;
     @Enumerated(EnumType.STRING)
     private ERole role;
-
     @Lob
     private String img;
 
